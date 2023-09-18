@@ -50,9 +50,20 @@ app.post("/login", async (req, res) => {
       [email]
     );
     if (user.length > 0) {
-      res.json({ exists: true });
+    //  res.json({ exists: true });
+       const [duser] = await db.query(
+        "SELECT * FROM expenseusers WHERE email = ? AND password = ?",
+        [email, password]
+       );
+       if(duser.length > 0){
+        res.json({ exists: true });
+       }
+       else{
+        res.status(401).json({error: "User not authorized"});
+       }
     } else {
-      res.json({ exists: false });
+      //res.json({ exists: false });
+      res.status(404).json({exists: false});
     }
   } catch (err) {
     console.error(err);
