@@ -6,9 +6,11 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-const userRoutes = require('./routes/userLogin')
+const loginRoute = require('./routes/loginRoute')
+const userRoute = require('./routes/userRoute');
 
-app.use(userRoutes);
+app.use(loginRoute);
+app.use(userRoute);
 
 app.listen(4000, (req, res) => {
   console.log("back end is working fine");
