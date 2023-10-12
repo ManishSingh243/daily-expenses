@@ -26,3 +26,16 @@ exports.getExpense = async (req, res) => {
         res.status(500).json({error: "Internal server error"});
     }
 }
+
+exports.deleteExpense = async (req, res) => {
+    try{
+        const expenseId = req.params.expenseId;
+
+        await db.query("DELETE FROM userexpense WHERE expenseid = ?", [expenseId]);
+
+        res.status(200).json({message: "expense deleted successfully"});
+    } catch(err){
+        console.log(err);
+        res.status(500).json({error: "Internal server error"});
+    }
+}
