@@ -1,5 +1,38 @@
 const db = require('../util/database')
 const bcrypt = require("bcrypt");
+const Razorpay = require('razorpay');
+const { options } = require('../routes/userRoute');
+
+var razorpay = new Razorpay({
+  key_id: 'rzp_test_eYUyK6TSJLcUyt',
+  key_secret: 'dIZlI3pLzs90VaLOMaRheWj7',
+});
+
+exports.postRazorpay = async (req, res) => {
+  const payment_capture = 1;
+  const amount = 499;
+  const currency = "INR";
+  const options = {
+    amount,
+    currency,
+    payment_capture,
+  };
+
+  try {
+    const response = await razorpay.orders.create(options);
+    console.log(response);
+
+    res.status(200).json({
+      id: response.id,
+      amount: response.amount,
+      currency: response.currency,
+    });
+  } catch (error) {
+    console.error("Error creating Razorpay order:", error);
+    res.status(500).json({ error: "Error creating Razorpay order" });
+  }
+};
+
 
 exports.postExpense = async (req, res) => {
     const {amount, description, category} = req.body;
