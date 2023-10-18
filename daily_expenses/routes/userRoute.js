@@ -12,4 +12,6 @@ router.get("/user-expenses", authenticate, expenseController.getExpense)
 //delete-expense
 router.delete("/delete-expense/:expenseId", expenseController.deleteExpense);
 
+router.post("/razorpay", expenseController.postRazorpay)
+
 module.exports = router;
