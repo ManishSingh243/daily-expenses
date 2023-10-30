@@ -1,28 +1,61 @@
-const db = require('../util/database')
+const db = require("../util/database");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-exports.postExpense = async (req, res) => {
-    const {amount, description, category} = req.body;
-    const userId = req.user.userId;
-    try{
-        await db.query('INSERT INTO userexpense (amount, description, category, userid) VALUES (?, ?, ?, ?)', [amount, description, category, userId]);
-        res.status(200).json({message: "Expense added successfully"})
-    }
-    catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal server error" });
-      }
-}
+exports.postSignUp = async (req, res) => {
+  const { name, email, password } = req.body;
 
-exports.getExpense = async (req, res) => {
-    try{
-        const userId = req.user.userId;
-        console.log(userId);
-        const [expenses] = await db.query("SELECT * FROM userexpense WHERE userid = ?", [userId]);
-        console.log(expenses);
-        res.status(200).json(expenses);
+  try {
+    // Check if the user already exists
+    const [existingUsers] = await db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ error: "User already exists" });
     }
-    catch(err){
-        res.status(500).json({error: "Internal server error"});
+
+    const hashedPassowrd = await bcrypt.hash(password, 10);
+
+    // Insert the new user into the database
+    await db.query(
+      "INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, ?)",
+      [name, email, hashedPassowrd, 'null']
+    );
+    res.status(200).json({ exists : true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.postLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user with the provided email exists
+    const [user] = await db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (user.length === 0) {
+      return res.status(404).json({ error: "User Not Found" });
     }
-}
+
+    // Compare the provided password with the hashed password from the database
+    const passwordMatch = await bcrypt.compare(password, user[0].password);
+
+    if (passwordMatch) {
+      const token = jwt.sign({ userId: user[0].userid }, 'MANISH');
+      console.log(token);
+      res.status(200).json({ token, isPremium: user[0].status === 'premium' });
+    } else {
+      res.status(401).json({ error: "User not authorized" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
