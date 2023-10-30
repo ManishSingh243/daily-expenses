@@ -9,6 +9,7 @@ var razorpay = new Razorpay({
 });
 
 exports.postRazorpay = async (req, res) => {
+
   const payment_capture = 1;
   const amount = 499;
   const currency = "INR";
@@ -33,6 +34,17 @@ exports.postRazorpay = async (req, res) => {
   }
 };
 
+exports.postPayment = async (req, res)=>{
+  const userId = req.user.userId;
+  await db.query("UPDATE users SET status = 'premium' WHERE userid = ?", [userId]);
+  const [userData] = await db.query("SELECT * FROM users WHERE userid=?", [userId]);
+
+  console.log(userData[0].status)
+
+  res.status(200).json({
+    isPremium: userData[0].status === 'premium'
+  })
+}
 
 exports.postExpense = async (req, res) => {
     const {amount, description, category} = req.body;
