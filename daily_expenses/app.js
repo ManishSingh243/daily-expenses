@@ -8,9 +8,11 @@ app.use(bodyParser.json());
 app.use(cors());
 const loginRoute = require('./routes/loginRoute')
 const userRoute = require('./routes/userRoute');
+const adminRoute = require('./routes/adminRoute')
 
 app.use(loginRoute);
 app.use(userRoute);
+app.use(adminRoute);
 
 app.listen(4000, (req, res) => {
   console.log("back end is working fine");
