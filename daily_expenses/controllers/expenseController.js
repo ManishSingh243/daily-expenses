@@ -50,6 +50,10 @@ exports.postExpense = async (req, res) => {
     const {amount, description, category} = req.body;
     const userId = req.user.userId;
     try{
+        const [userAmountResult] = await db.query('SELECT totalexpense FROM users WHERE userid = ?', [userId]);
+        const userAmount = parseFloat(userAmountResult[0].totalexpense);
+        const newAmount = userAmount + parseFloat(amount);
+        await db.query('UPDATE users SET totalexpense = ? WHERE userid = ?', [newAmount, userId])
         await db.query('INSERT INTO userexpense (amount, description, category, userid) VALUES (?, ?, ?, ?)', [amount, description, category, userId]);
         res.status(200).json({message: "Expense added successfully"})
     }
