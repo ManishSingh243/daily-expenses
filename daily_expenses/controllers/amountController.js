@@ -3,9 +3,10 @@ const db = require('../util/database')
 exports.postAmount = async (req, res) => {
     try{
         console.log("program initiated")
-        const [users] = await db.query("SELECT userid, name FROM users");
+        const [users] = await db.query("SELECT userid, name, totalexpense FROM users");
         console.log("line 5 executed successfully")
-        const arr = [];
+        console.log("users list:", users);
+       /* const arr = [];
         console.log("arr created successfully")
 
         for (const user of users) {
@@ -21,8 +22,9 @@ exports.postAmount = async (req, res) => {
             });
             console.log("data pushed successfully")
         }
-        console.log(arr)
-        res.send(arr);
+        console.log(arr) 
+        res.send(arr); */
+        res.send(users);
     } catch(err){
         res.status(500).json({message: "Internal error"})
     }
