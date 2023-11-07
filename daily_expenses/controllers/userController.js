@@ -20,8 +20,8 @@ exports.postSignUp = async (req, res) => {
 
     // Insert the new user into the database
     await db.query(
-      "INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, ?)",
-      [name, email, hashedPassowrd, 'null']
+      "INSERT INTO users (name, email, password, status, totalexpense) VALUES (?, ?, ?, ?, ?)",
+      [name, email, hashedPassowrd, 'npremium', 0]
     );
     res.status(200).json({ exists : true });
   } catch (err) {
