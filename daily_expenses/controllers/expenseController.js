@@ -3,6 +3,17 @@ const bcrypt = require("bcrypt");
 const Razorpay = require('razorpay');
 const { options } = require('../routes/userRoute');
 
+const fs = require('fs');
+const path = require('path');
+const AWS = require('aws-sdk');
+const authenticate = require('../middleware/authMiddleware');
+
+AWS.config.update({
+  accessKeyId: 'AKIAV5SHRHVIJVKWBUPA',
+  secretAccessKey: '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',
+  region: 'ap-south-1',
+});
+
 var razorpay = new Razorpay({
   key_id: 'rzp_test_eYUyK6TSJLcUyt',
   key_secret: 'dIZlI3pLzs90VaLOMaRheWj7',
@@ -88,3 +99,45 @@ exports.deleteExpense = async (req, res) => {
         res.status(500).json({error: "Internal server error"});
     }
 }
+
+exports.getExpenseFile = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    // Check if the user is premium
+    const [userData] = await db.query('SELECT status FROM users WHERE userid = ?', [userId]);
+
+    if (userData[0].status !== 'premium') {
+      return res.status(401).json({ error: 'Unauthorized. Premium access required.' });
+    }
+
+    // Query expenses for the user
+    const [expenses] = await db.query('SELECT * FROM userexpense WHERE userid = ?', [userId]);
+
+    // Generate a CSV file
+    const filePath = path.join(__dirname, `../expense_report_${userId}.csv`);
+    const csvData = expenses.map((expense) => `${expense.amount},${expense.description},${expense.category}`).join('\n');
+    fs.writeFileSync(filePath, 'Amount,Description,Category\n' + csvData, 'utf-8');
+
+    // Upload the file to S3
+    const s3 = new AWS.S3();
+    const params = {
+      Bucket: 'expensetracker-manish1',
+      Key: `expense_reports/expense_report_${userId}.csv`,
+      Body: fs.createReadStream(filePath),
+    };
+
+    await s3.upload(params).promise();
+
+    // Get the file URL
+    const fileUrl = s3.getSignedUrl('getObject', { Bucket: params.Bucket, Key: params.Key, Expires: 60 });
+
+    // Delete the local file
+    fs.unlinkSync(filePath);
+
+    res.status(200).json({ fileUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
