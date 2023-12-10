@@ -78,7 +78,19 @@ exports.getExpense = async (req, res) => {
     try{
         const userId = req.user.userId;
         console.log(userId);
-        const [expenses] = await db.query("SELECT * FROM userexpense WHERE userid = ?", [userId]);
+        //Pagination
+        const page = req.query.page; 
+        console.log(page);
+
+
+        const offset = (page - 1) * 10;
+        console.log(offset);
+
+        const [expenses] = await db.query(
+            "SELECT * FROM userexpense WHERE userid = ? LIMIT ? OFFSET ?",
+            [userId, 10, offset]
+        );
+   //     const [expenses] = await db.query("SELECT * FROM userexpense WHERE userid = ?", [userId]);
         console.log(expenses);
         res.status(200).json(expenses);
     }
