@@ -11,13 +11,13 @@ const userRoute = require('./routes/userRoute');
 const adminRoute = require('./routes/adminRoute')
 const passwordRoute = require('./routes/passwordRoute')
 
-const PORT = process.env.PORT;
+//const PORT = process.env.PORT;
 
 app.use(loginRoute);
 app.use(userRoute);
 app.use(adminRoute);
 app.use(passwordRoute);
 
-app.listen(PORT, (req, res) => {
+app.listen(4000, (req, res) => {
   console.log("back end is working fine");
 });
