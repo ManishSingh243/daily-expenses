@@ -9,14 +9,14 @@ const AWS = require('aws-sdk');
 const authenticate = require('../middleware/authMiddleware');
 
 AWS.config.update({
-  accessKeyId: 'AKIAV5SHRHVIJVKWBUPA',
-  secretAccessKey: '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',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: 'ap-south-1',
 });
 
 var razorpay = new Razorpay({
-  key_id: 'rzp_test_eYUyK6TSJLcUyt',
-  key_secret: 'dIZlI3pLzs90VaLOMaRheWj7',
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 exports.postRazorpay = async (req, res) => {
