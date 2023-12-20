@@ -25,7 +25,6 @@ exports.postSignUp = async (req, res) => {
     );
     res.status(200).json({ exists : true });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -49,13 +48,11 @@ exports.postLogin = async (req, res) => {
 
     if (passwordMatch) {
       const token = jwt.sign({ userId: user[0].userid }, 'MANISH');
-      console.log(token);
       res.status(200).json({ token, isPremium: user[0].status === 'premium' });
     } else {
       res.status(401).json({ error: "User not authorized" });
     }
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
