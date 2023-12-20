@@ -46,7 +46,6 @@ exports.postPassword = async (req, res) => {
 
         res.send(sendEmail);
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: 'Failed to send reset email' });
     }
 };
@@ -73,7 +72,6 @@ exports.postResetPassword = async (req, res) => {
 
         res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
