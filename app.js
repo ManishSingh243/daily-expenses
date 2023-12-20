@@ -12,6 +12,7 @@ const adminRoute = require('./routes/adminRoute')
 const passwordRoute = require('./routes/passwordRoute')
 
 //const PORT = process.env.PORT;
+const dotenv = require('dotenv').config();
 
 app.use(loginRoute);
 app.use(userRoute);
