@@ -32,7 +32,6 @@ exports.postRazorpay = async (req, res) => {
 
   try {
     const response = await razorpay.orders.create(options);
-    console.log(response);
 
     res.status(200).json({
       id: response.id,
@@ -40,7 +39,6 @@ exports.postRazorpay = async (req, res) => {
       currency: response.currency,
     });
   } catch (error) {
-    console.error("Error creating Razorpay order:", error);
     res.status(500).json({ error: "Error creating Razorpay order" });
   }
 };
@@ -49,8 +47,6 @@ exports.postPayment = async (req, res)=>{
   const userId = req.user.userId;
   await db.query("UPDATE users SET status = 'premium' WHERE userid = ?", [userId]);
   const [userData] = await db.query("SELECT * FROM users WHERE userid=?", [userId]);
-
-  console.log(userData[0].status)
 
   res.status(200).json({
     isPremium: userData[0].status === 'premium'
@@ -69,7 +65,6 @@ exports.postExpense = async (req, res) => {
         res.status(200).json({message: "Expense added successfully"})
     }
     catch (err) {
-        console.error(err);
         res.status(500).json({ error: "Internal server error" });
       }
 }
@@ -77,21 +72,13 @@ exports.postExpense = async (req, res) => {
 exports.getExpense = async (req, res) => {
     try{
         const userId = req.user.userId;
-        console.log(userId);
-        //Pagination
         const page = req.query.page; 
-        console.log(page);
-
-
         const offset = (page - 1) * 10;
-        console.log(offset);
 
         const [expenses] = await db.query(
             "SELECT * FROM userexpense WHERE userid = ? LIMIT ? OFFSET ?",
             [userId, 10, offset]
         );
-   //     const [expenses] = await db.query("SELECT * FROM userexpense WHERE userid = ?", [userId]);
-        console.log(expenses);
         res.status(200).json(expenses);
     }
     catch(err){
@@ -107,7 +94,6 @@ exports.deleteExpense = async (req, res) => {
 
         res.status(200).json({message: "expense deleted successfully"});
     } catch(err){
-        console.log(err);
         res.status(500).json({error: "Internal server error"});
     }
 }
@@ -149,7 +135,6 @@ exports.getExpenseFile = async (req, res) => {
 
     res.status(200).json({ fileUrl });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
