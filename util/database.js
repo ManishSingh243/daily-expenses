@@ -9,15 +9,17 @@ const db = mysql2.createPool({
 module.exports = db;*/
 
 const mysql2 = require('mysql2/promise');
+require('dotenv').config(); // Load environment variables from .env file
 
 const db = mysql2.createPool({
-    host: 'database-2.c10ey06e6xuk.ap-south-1.rds.amazonaws.com',
-    user: 'john',
-    password: 'mufilrahman',
-    database: 'sys',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
 module.exports = db;
+
