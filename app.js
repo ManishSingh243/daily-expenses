@@ -13,12 +13,13 @@ const passwordRoute = require('./routes/passwordRoute')
 
 //const PORT = process.env.PORT;
 const dotenv = require('dotenv').config();
+const HOST = '3.108.235.176';
 
 app.use(loginRoute);
 app.use(userRoute);
 app.use(adminRoute);
 app.use(passwordRoute);
 
-app.listen(4000, (req, res) => {
+app.listen(4000, HOST, (req, res) => {
   console.log("back end is working fine");
 });
