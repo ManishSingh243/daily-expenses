@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Navbar() {
   const [activeLink, setActiveLink] = useState("Home"); // State to track the active link
@@ -11,76 +13,43 @@ export default function Navbar() {
   };
 
   return (
-    <div>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-success">
-        <div className="container-fluid">
-          <div className="collapse navbar-collapse">
-            <ul className="navbar-nav">
-            <li className="nav-item">
-                <Link
-                  className={`nav-link ${activeLink === "/expense-amount" ? "active" : ""}`}
-                  aria-current="page"
-                  to="/expense-amount"
-                  onClick={() => handleLinkClick("ExpenseAmount")} // Set the active link on click
-                >
-                  Total
-                </Link>
-              </li>
-              
-              <li className="nav-item">
-                <Link
-                  className={`nav-link ${activeLink === "/add-expense" ? "active" : ""}`}
-                  aria-current="page"
-                  to="/add-expense"
-                  onClick={() => handleLinkClick("Add Expense")} // Set the active link on click
-                >
-                  Add Expense
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={`nav-link ${activeLink === "/user-expenses" ? "active" : ""}`}
-                  aria-current="page"
-                  to="/user-expenses"
-                  onClick={() => handleLinkClick("Expenses")} // Set the active link on click
-                >
-                  Expenses
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={`nav-link ${activeLink === "/signup" ? "active" : ""}`}
-                  to="/signup"
-                  onClick={() => handleLinkClick("Signup")} // Set the active link on click
-                >
-                  Signup
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={`nav-link ${activeLink === "/login" ? "active" : ""}`}
-                  aria-current="page"
-                  to="/login"
-                  onClick={() => handleLinkClick("Login")} // Set the active link on click
-                >
-                  Login
-                </Link>
-              </li>
-              
-              <li className="nav-item">
-                <Link
-                  className={`nav-link ${activeLink === "/logout" ? "active" : ""}`}
-                  aria-current="page"
-                  to="/logout"
-                  onClick={() => handleLinkClick("LogoutButton")} // Set the active link on click
-                >
-                  Logout
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+    <div style={navbarStyle}>
+      <Link to="/expense-amount" onClick={() => handleLinkClick("ExpenseAmount")} style={linkStyle}>
+        Total
+      </Link>
+
+      <Link to="/add-expense" onClick={() => handleLinkClick("Add Expense")} style={linkStyle}>
+        Add Expense
+      </Link>
+
+      <Link to="/user-expenses" onClick={() => handleLinkClick("Expenses")} style={linkStyle}>
+        Expenses
+      </Link>
+
+      <Link to="/signup" onClick={() => handleLinkClick("Signup")} style={linkStyle}>
+        Signup
+      </Link>
+
+      <Link to="/login" onClick={() => handleLinkClick("Login")} style={linkStyle}>
+        Login
+      </Link>
+
+      <Link to="/logout" onClick={() => handleLinkClick("LogoutButton")} style={linkStyle}>
+        Logout
+      </Link>
     </div>
   );
 }
+
+const navbarStyle = {
+  backgroundColor: "#28a745",
+  padding: "10px",
+  display: "flex",
+};
+
+const linkStyle = {
+  color: "#fff",
+  margin: "0 10px",
+  textDecoration: "none",
+  fontSize: "10px"
+};
