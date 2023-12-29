@@ -2,6 +2,7 @@ const db = require('../util/database')
 const bcrypt = require("bcrypt");
 const Razorpay = require('razorpay');
 const { options } = require('../routes/userRoute');
+require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
