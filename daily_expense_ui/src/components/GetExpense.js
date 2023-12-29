@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Form } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function GetExpense() {
   const [expenses, setExpenses] = useState([]);
-
-  //pagination
   const [currentPage, setCurrentPage] = useState(1);
 
   const token = localStorage.getItem("token");
@@ -18,10 +16,7 @@ export default function GetExpense() {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(
-        `/user-expenses?page=${currentPage}`,
-        config
-      );
+      const response = await axios.get(`/user-expenses?page=${currentPage}`, config);
       setExpenses(response.data);
     } catch (err) {
       console.log(err);
@@ -29,13 +24,13 @@ export default function GetExpense() {
   };
 
   useEffect(() => {
-    fetchExpenses(); // Call the function here
+    fetchExpenses();
   }, [currentPage]);
 
   const handleDeleteExpense = async (expenseId) => {
     try {
       await axios.delete(`/delete-expense/${expenseId}`, config);
-      fetchExpenses(); // Refresh the list after deletion
+      fetchExpenses();
     } catch (err) {
       console.log(err);
     }
@@ -44,8 +39,6 @@ export default function GetExpense() {
   const handleDownloadFile = async () => {
     try {
       const response = await axios.get("/download-expense-file", config);
-
-      // Show the file URL to the user
       alert(`Download your expense file:\n${response.data.fileUrl}`);
     } catch (err) {
       console.log(err);
@@ -54,35 +47,81 @@ export default function GetExpense() {
 
   return (
     <div>
-      <h1>Expense List</h1>
-      <ul>
-        {expenses.map((expense) => (
-          <li key={expense.expenseid}>
-            <strong>Amount:</strong> {expense.amount},{" "}
-            <strong>Description:</strong> {expense.description},{" "}
-            <strong>Category:</strong> {expense.category}
-            <Button onClick={() => handleDeleteExpense(expense.expenseid)}>
-              Delete
-            </Button>
-          </li>
-        ))}
-      </ul>
-      <Link to="/expense">
-        <Button type="submit">Add Expense</Button>
-      </Link>
-      <Button onClick={handleDownloadFile}>Download Expense File</Button>
       
-      <Button
-        onClick={() => setCurrentPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        Previous Page
-      </Button>
-      <Button onClick={() => setCurrentPage(currentPage + 1)} 
-      disabled={expenses.length < 10}
-      >
-        Next Page
-      </Button>
+      <Table striped bordered responsive>
+        <thead>
+          <tr>
+            <th >Amount</th>
+            <th >Description</th>
+            <th >Category</th>
+            <th >Action</th>
+          </tr>
+        </thead>
+        <tbody style={bodyStyle}>
+          {expenses.map((expense) => (
+            <tr key={expense.expenseid}>
+              <td >{expense.amount}</td>
+              <td >{expense.description}</td>
+              <td >{expense.category}</td>
+              <td >
+                <Button onClick={() => handleDeleteExpense(expense.expenseid)}>
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      <div style={buttonContainerStyle}>
+        <Link to="/add-expense" style={buttonLinkStyle}>
+          <Button type="submit" style={buttonStyle}>
+            Add Expense
+          </Button>
+        </Link>
+        <Button onClick={handleDownloadFile} style={buttonStyle}>
+          Download Expense File
+        </Button>
+        <Button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          style={buttonStyle}
+        >
+          Previous Page
+        </Button>
+        <Button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={expenses.length < 10}
+          style={buttonStyle}
+        >
+          Next Page
+        </Button>
+      </div>
     </div>
   );
+}
+
+const buttonContainerStyle = {
+  display: "flex",
+  justifyContent: "center", // Center the buttons horizontally
+  marginTop: "20px",
+  fontSize: "5px"
+};
+
+const buttonLinkStyle = {
+  textDecoration: "none",
+};
+
+const buttonStyle = {
+  margin: "10px",
+  backgroundColor: "#28a745",
+  color: "#fff",
+  border: "none",
+  padding: "10px 20px",
+  borderRadius: "5px",
+  cursor: "pointer",
+  fontSize: "10px"
+};
+
+const bodyStyle = {
+  fontSize: "14px"
 }
