@@ -36,12 +36,22 @@ export default function GetExpense() {
     }
   };
 
-  const handleDownloadFile = async () => {
+ const handleDownloadFile = async () => {
     try {
       const response = await axios.get("/download-expense-file", config);
-      alert(`Download your expense file:\n${response.data.fileUrl}`);
+  
+      // Extract the file URL from the response
+      const fileUrl = response.data.fileUrl;
+  
+      // Create a hidden link and trigger the download
+      const downloadLink = document.createElement("a");
+      downloadLink.href = fileUrl;
+      downloadLink.download = "expense_report.csv"; // Set the desired file name
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
     } catch (err) {
-      console.log(err);
+      console.error('Error:', err);
     }
   };
 
